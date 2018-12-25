@@ -2,14 +2,14 @@
 name = "g2p"
 version = "0.1.0"
 dependencies = [
- "g2poly 0.1.0",
+ "g2poly 0.1.1-pre",
  "quote 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "syn 0.15.23 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "g2poly"
-version = "0.1.0"
+version = "0.1.1-pre"
 
 [[package]]
 name = "proc-macro2"
