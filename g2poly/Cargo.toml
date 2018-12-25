@@ -1,0 +1,17 @@
+[package]
+name = "g2poly"
+version = "0.1.0"
+authors = ["WanzenBug <moritz9422@gmail.com>"]
+edition = "2018"
+readme = "./README.md"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/WanzenBug/g2p"
+documentation = "https://docs.rs/g2poly"
+description = """
+Primitive implementation of polynomials over the field GF(2)
+"""
+categories = [ "no-std", "algorithms" ]
+keywords = [ "finite-field", "galois"]
+
+[lib]
+path = "src/lib.rs"
