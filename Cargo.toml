@@ -19,4 +19,4 @@ proc-macro = true
 [dependencies]
 syn = { version = "0.15", features = ["full"] }
 quote = "0.6"
-g2poly = { path = "./g2poly" }
+g2poly = { version = "0.1", path = "./g2poly"}
