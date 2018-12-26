@@ -1,6 +1,6 @@
 [package]
 name = "g2p"
-version = "0.1.1-pre"
+version = "0.1.1"
 authors = ["WanzenBug <moritz9422@gmail.com>"]
 edition = "2018"
 readme = "./README.md"
