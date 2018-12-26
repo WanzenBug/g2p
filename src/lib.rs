@@ -302,6 +302,13 @@ pub fn g2p(input: TokenStream) -> TokenStream {
             }
         }
     ];
+    let display = quote![
+        impl ::core::fmt::Display for #ident {
+            fn fmt<'a>(&self, f: &mut ::core::fmt::Formatter<'a>) -> ::core::fmt::Result {
+                write!(f, #tmpl, self.0)
+            }
+        }
+    ];
     let clone = quote![
         impl ::core::clone::Clone for #ident {
             fn clone(&self) -> Self {
@@ -320,12 +327,22 @@ pub fn g2p(input: TokenStream) -> TokenStream {
                 #ident(self.0 ^ rhs.0)
             }
         }
+        impl ::core::ops::AddAssign for #ident {
+            fn add_assign(&mut self, rhs: #ident) {
+                *self = *self + rhs;
+            }
+        }
     ];
     let sub = quote![
         impl ::core::ops::Sub for #ident {
             type Output = #ident;
             fn sub(self, rhs: #ident) -> #ident {
                 #ident(self.0 ^ rhs.0)
+            }
+        }
+        impl ::core::ops::SubAssign for #ident {
+            fn sub_assign(&mut self, rhs: #ident) {
+                *self = *self - rhs;
             }
         }
     ];
@@ -345,6 +362,11 @@ pub fn g2p(input: TokenStream) -> TokenStream {
                     c -= #field_size as #ari_ty - 1;
                 }
                 #ident(#ident::EXP_TABLE[c as usize])
+            }
+        }
+        impl ::core::ops::MulAssign for #ident {
+            fn mul_assign(&mut self, rhs: #ident) {
+                *self = *self * rhs;
             }
         }
     ];
@@ -368,6 +390,11 @@ pub fn g2p(input: TokenStream) -> TokenStream {
                 #ident(#ident::EXP_TABLE[c as usize])
             }
         }
+        impl ::core::ops::DivAssign for #ident {
+            fn div_assign(&mut self, rhs: #ident) {
+                *self = *self / rhs;
+            }
+        }
     ];
 
     TokenStream::from(quote! {
@@ -377,6 +404,7 @@ pub fn g2p(input: TokenStream) -> TokenStream {
         #into
         #eq
         #debug
+        #display
         #clone
         #copy
         #add
