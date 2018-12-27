@@ -20,6 +20,6 @@ proc-macro = true
 static_assertions = "0.3"
 
 [dependencies]
-syn = { version = "0.15", features = ["full"] }
+syn = { version = "0.15.23", features = ["parsing"] }
 quote = "0.6"
 g2poly = { version = "0.1.0", path = "./g2poly"}

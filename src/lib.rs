@@ -85,18 +85,18 @@ impl Parse for ParsedInput {
             match ident_name.as_str() {
                 "modulus" => {
                     if modulus.is_some() {
-                        Err(syn::Error::new(ident.span(), "Double declaration of 'modulus'"))?
+                        Err(syn::parse::Error::new(ident.span(), "Double declaration of 'modulus'"))?
                     }
                     modulus = Some(input.parse()?);
                 }
                 "generator" => {
                     if generator.is_some() {
-                        Err(syn::Error::new(ident.span(), "Double declaration of 'generator'"))?
+                        Err(syn::parse::Error::new(ident.span(), "Double declaration of 'generator'"))?
                     }
                     generator = Some(input.parse()?)
                 }
                 _ => {
-                    Err(syn::Error::new(ident.span(), "Expected one of 'modulus' or 'generator'"))?
+                    Err(syn::parse::Error::new(ident.span(), "Expected one of 'modulus' or 'generator'"))?
                 }
             }
         }
