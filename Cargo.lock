@@ -1,6 +1,6 @@
 [[package]]
 name = "g2p"
-version = "0.1.2-pre"
+version = "0.1.2"
 dependencies = [
  "g2poly 0.1.0",
  "quote 0.6.10 (registry+https://github.com/rust-lang/crates.io-index)",
