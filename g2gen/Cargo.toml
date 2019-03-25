@@ -1,6 +1,6 @@
 [package]
-name = "g2p"
-version = "0.1.3-pre"
+name = "g2gen"
+version = "0.1.0"
 authors = ["WanzenBug <moritz@wanzenbug.xyz>"]
 edition = "2018"
 readme = "./README.md"
@@ -8,13 +8,15 @@ license = "MIT/Apache-2.0"
 repository = "https://github.com/WanzenBug/g2p"
 documentation = "https://docs.rs/g2p"
 description = """
-A crate to create types that implement fast finite field arithmetic.
+A macro to create types that implement fast finite field arithmetic.
 """
-categories = [ "no-std", "cryptography", "algorithms" ]
+categories = [ "no-std", "algorithms" ]
 keywords = [ "finite-field", "galois", "macro", "newtype"]
 
-[dev-dependencies]
-static_assertions = "0.3"
+[lib]
+proc-macro = true
 
 [dependencies]
-g2gen = { version = "0.1.0", path = "./g2gen" }
+syn = { version = "0.15.23", features = ["parsing"] }
+quote = "0.6"
+g2poly = { version = "0.1.0", path = "../g2poly" }

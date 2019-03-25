@@ -6,8 +6,8 @@
 
 use g2p::g2p;
 
-g2p!(GF16, 4, modulus: 0b1_0011, generator: 0b10);
-g2p!(GF256, 8, modulus: 0b1_0001_1101, generator: 0b10);
+g2p!(GF16, 4, modulus: 0b1_0011);
+g2p!(GF256, 8, modulus: 0b1_0001_1101);
 
 #[test]
 fn test_gf16() {

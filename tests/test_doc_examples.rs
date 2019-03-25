@@ -4,10 +4,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use g2p::g2p;
+use g2p::{GaloisField, g2p};
 
+g2p!(GF4, 2);
 g2p!(GF16, 4, modulus: 0b10011);
-
 g2p!(GF1024, 10);
 
 #[test]
@@ -36,4 +36,22 @@ fn test_gf1024() {
     assert_eq!(d / b, a);
     assert_eq!(d / a, b);
     assert_eq!(u16::from(d / b), 555_u16);
+}
+
+
+#[test]
+fn test_g4() {
+    let g = GF4::GENERATOR;
+    assert_ne!(g * g, GF4::ONE);
+    assert_eq!(g * g * g, GF4::ONE);
+}
+
+#[test]
+fn test_pow() {
+    let g: GF16 = 2.into();
+    assert_eq!(g.pow(0), GF16::ONE);
+    assert_eq!(g.pow(1), g);
+    assert_eq!(g.pow(2), 4.into());
+    assert_eq!(g.pow(3), 8.into());
+    assert_eq!(g.pow(4), 3.into());
 }
