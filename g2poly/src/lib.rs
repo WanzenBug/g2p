@@ -50,7 +50,7 @@ use core::{
 ///
 /// 3 main operations [`+`](#impl-Add<G2Poly>), [`-`](#impl-Sub<G2Poly>) and
 /// [`*`](#impl-Mul<G2Poly>) are implemented, as well as [`%`](#impl-Rem<G2Poly>) for remainder
-/// calculation. Note that multiplication generates a [`G2PolyProd`] so there is no risk of
+/// calculation. Note that multiplication generates a `G2PolyProd` so there is no risk of
 /// overflow.
 ///
 /// Division is left out as there is generally not needed for common use cases. This may change in a
@@ -58,12 +58,12 @@ use core::{
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct G2Poly(pub u64);
 
-/// The result of multiplying two [`G2Poly`]
+/// The result of multiplying two `G2Poly`
 ///
-/// This type is used to represent the result of multiplying two [`G2Poly`]s. Since this could
+/// This type is used to represent the result of multiplying two `G2Poly`s. Since this could
 /// overflow when relying on just a `u64`, this type uses an internal `u128`. The only operation
 /// implemented on this type is [`%`](#impl-Rem<G2Poly>) which reduces the result back to a
-/// [`G2Poly`].
+/// `G2Poly`.
 ///
 /// ```rust
 /// # use g2poly::{G2Poly, G2PolyProd};
