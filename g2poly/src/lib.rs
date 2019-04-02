@@ -74,6 +74,45 @@ pub struct G2Poly(pub u64);
 #[derive(Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct G2PolyProd(pub u128);
 
+impl G2PolyProd {
+    /// Convert to G2Poly
+    ///
+    /// # Panics
+    /// Panics, if the internal representation exceeds the maximum value for G2Poly.
+    ///
+    /// # Example
+    /// ```rust
+    /// # use g2poly::G2Poly;
+    ///
+    /// let a = G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(2);
+    /// assert_eq!(G2Poly(0x80_00_00_00_00_00_00_00), a.to_poly());
+    ///
+    /// // Next line would panics!
+    /// // (G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(4)).to_poly();
+    /// ```
+    pub fn to_poly(self) -> G2Poly {
+        self.try_to_poly().expect("Tried to convert product bigger than G2Poly max")
+    }
+
+    /// Convert to G2Poly if possible
+    ///
+    /// In case the value would not fit into `G2Poly`, return `None`
+    ///
+    /// # Example
+    /// ```rust
+    /// # use g2poly::G2Poly;
+    /// assert_eq!((G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(2)).try_to_poly(), Some(G2Poly(0x80_00_00_00_00_00_00_00)));
+    /// assert_eq!((G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(4)).try_to_poly(), None);
+    /// ```
+    pub fn try_to_poly(self) -> Option<G2Poly> {
+        if self.0 <= u64::max_value() as u128 {
+            Some(G2Poly(self.0 as u64))
+        } else {
+            None
+        }
+    }
+}
+
 impl fmt::Debug for G2Poly {
     fn fmt<'a>(&self, f: &mut fmt::Formatter<'a>) -> fmt::Result {
         write!(f, "G2Poly {{ {:b} }}", self.0)
@@ -148,6 +187,41 @@ impl ops::Rem for G2Poly {
     }
 }
 
+impl ops::Div for G2Poly {
+    type Output = G2Poly;
+
+    /// Calculate the polynomial quotient
+    ///
+    /// For `a / b` calculate the value `q` in `a = q * b + r` such that
+    /// |r| < |b|.
+    ///
+    /// # Example
+    /// ```rust
+    /// # use g2poly::G2Poly;
+    /// let a = G2Poly(0b0100_0000_0101);
+    /// let b = G2Poly(0b1010);
+    ///
+    /// assert_eq!(G2Poly(0b101_01010), a / b);
+    /// ```
+    fn div(self, rhs: G2Poly) -> G2Poly {
+        let divisor = rhs.0;
+        let divisor_degree_p1 = 64 - divisor.leading_zeros();
+        assert!(divisor_degree_p1 > 0);
+
+        let mut quotient = 0;
+        let mut rem = self.0;
+        let mut rem_degree_p1 = 64 - self.0.leading_zeros();
+
+        while divisor_degree_p1 <= rem_degree_p1 {
+            let shift_len = rem_degree_p1 - divisor_degree_p1;
+            quotient |= 1 << shift_len;
+            rem ^= divisor << shift_len;
+            rem_degree_p1 = 64 - rem.leading_zeros();
+        }
+        G2Poly(quotient)
+    }
+}
+
 impl ops::Add for G2Poly {
     type Output = G2Poly;
 
@@ -167,6 +241,19 @@ impl ops::Sub for G2Poly {
 impl ops::Rem<G2Poly> for G2PolyProd {
     type Output = G2Poly;
 
+    /// Calculate the polynomial remainder of the product of polynomials
+    ///
+    /// When calculating a % b this computes the value of r in
+    /// `a = q * b + r` such that |r| < |b|.
+    ///
+    /// # Example
+    /// ```rust
+    /// # use g2poly::G2Poly;
+    /// let a = G2Poly(0x12_34_56_78_9A_BC_DE);
+    /// let m = G2Poly(0x00_00_00_01_00_00);
+    /// assert!((a * a % m).degree().expect("Positive degree") < m.degree().expect("Positive degree"));
+    /// assert_eq!(G2Poly(0b0101_0001_0101_0100), a * a % m);
+    /// ```
     fn rem(self, rhs: G2Poly) -> G2Poly {
         let module = rhs.0 as u128;
         let mod_degree_p1 = 128 - module.leading_zeros();
@@ -210,6 +297,49 @@ pub fn gcd(a: G2Poly, b: G2Poly) -> G2Poly {
     }
     a
 }
+
+/// Calculate the greatest common divisor with Bézout coefficients
+///
+/// Uses the extended euclidean algorithm to calculate the greatest common divisor of two
+/// polynomials. Also returns the Bézout coefficients x and y such that
+/// > gcd(a, b) == a * x + b * x
+///
+/// # Example
+/// ```rust
+/// # use g2poly::{G2Poly, extended_gcd};
+///
+/// let a = G2Poly(0b11011);
+/// let b = G2Poly(0b100001);
+/// let (gcd, x, y) = extended_gcd(a, b);
+/// assert_eq!(gcd, G2Poly(0b11));
+/// assert_eq!((a * x).to_poly() + (b * y).to_poly(), G2Poly(0b11));
+/// ```
+pub fn extended_gcd(a: G2Poly, b: G2Poly) -> (G2Poly, G2Poly, G2Poly) {
+    let mut s = G2Poly(0);
+    let mut old_s = G2Poly(1);
+    let mut t = G2Poly(1);
+    let mut old_t = G2Poly(0);
+    let mut r = b;
+    let mut old_r = a;
+
+    while r != G2Poly(0) {
+        let quotient = old_r / r;
+        let tmp = old_r - (quotient * r).to_poly();
+        old_r = r;
+        r = tmp;
+
+        let tmp = old_s - (quotient * s).to_poly();
+        old_s = s;
+        s = tmp;
+
+        let tmp = old_t - (quotient * t).to_poly();
+        old_t = t;
+        t = tmp;
+    }
+
+    (old_r, old_s, old_t)
+}
+
 
 impl G2Poly {
     /// The constant `1` polynomial.
@@ -450,5 +580,23 @@ mod tests {
         let g = G2Poly(0b1);
 
         g.is_generator(m);
+    }
+
+    #[test]
+    fn test_poly_div() {
+        let a = G2Poly(0b10000001001);
+        let b = G2Poly(0b1010);
+
+        assert_eq!(G2Poly(0b10101011), a / b);
+    }
+
+    #[test]
+    fn test_extended_euclid() {
+        let m = G2Poly(0b10000001001);
+        let a = G2Poly(10);
+
+        let (gcd, x, _) = extended_gcd(a, m);
+        assert_eq!(G2Poly(1), gcd);
+        assert_eq!(G2Poly(1), a * x % m);
     }
 }
