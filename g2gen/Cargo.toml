@@ -19,4 +19,5 @@ proc-macro = true
 [dependencies]
 syn = { version = "0.15.23", features = ["parsing"] }
 quote = "0.6"
-g2poly = { version = "0.1.1", path = "../g2poly" }
+proc-macro2 = "*"
+g2poly = { version = "0.2.0", path = "../g2poly" }
