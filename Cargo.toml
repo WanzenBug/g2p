@@ -17,4 +17,4 @@ keywords = [ "finite-field", "galois", "macro", "newtype"]
 static_assertions = "0.3"
 
 [dependencies]
-g2gen = { version = "0.1.0", path = "./g2gen" }
+g2gen = { version = "0.2.0", path = "./g2gen" }

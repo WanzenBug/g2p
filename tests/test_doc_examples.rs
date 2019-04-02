@@ -8,7 +8,7 @@ use g2p::{GaloisField, g2p};
 
 g2p!(GF4, 2);
 g2p!(GF16, 4, modulus: 0b10011);
-g2p!(GF1024, 10);
+g2p!(GF1024, 10, modulus: 0b100_0000_1001);
 
 #[test]
 fn test_g16() {
@@ -25,19 +25,28 @@ fn test_g16() {
 
 #[test]
 fn test_gf1024() {
+    eprintln!("1");
     let a: GF1024 = 555.into();
+    eprintln!("2");
     let b: GF1024 = 444.into();
-
+    eprintln!("3");
     let c = a + b;
+    eprintln!("4");
     let d = a * b;
+    assert_eq!(765, u16::from(d));
+    eprintln!("5");
 
     assert_eq!(c + a, b);
+    eprintln!("6");
     assert_eq!(c + b, a);
+    eprintln!("7");
     assert_eq!(d / b, a);
+    eprintln!("8");
     assert_eq!(d / a, b);
+    eprintln!("9");
     assert_eq!(u16::from(d / b), 555_u16);
+    eprintln!("10");
 }
-
 
 #[test]
 fn test_g4() {

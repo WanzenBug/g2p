@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use g2p::g2p;
+use g2p::{g2p, GaloisField};
 
 g2p!(GF16, 4, modulus: 0b1_0011);
 g2p!(GF256, 8, modulus: 0b1_0001_1101);
@@ -12,15 +12,21 @@ g2p!(GF256, 8, modulus: 0b1_0001_1101);
 #[test]
 fn test_gf16() {
     // Test against QR code defined tables
-    assert_eq!(&GF16::EXP_TABLE[..], &GF16_EXP[..]);
-    assert_eq!(&GF16::LOG_TABLE[..], &GF16_LOG[..]);
+    for (i, check) in GF16_EXP.iter().enumerate() {
+        let a = GF16::GENERATOR.pow(i);
+        assert_eq!(a.0, *check);
+        assert_eq!(GF16_LOG[a.0 as usize] % 15, i as u8 % 15);
+    }
 }
 
 #[test]
 fn test_gf256() {
     // Test against QR code defined tables
-    assert_eq!(&GF256::EXP_TABLE[..], &GF256_EXP[..]);
-    assert_eq!(&GF256::LOG_TABLE[..], &GF256_LOG[..]);
+    for (i, check) in GF256_EXP.iter().enumerate() {
+        let a = GF256::GENERATOR.pow(i);
+        assert_eq!(a.0, *check);
+        assert_eq!(GF256_LOG[a.0 as usize] % 255, i as u8 % 255);
+    }
 }
 
 
