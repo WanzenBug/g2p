@@ -12,7 +12,7 @@ dependencies = [
 
 [[package]]
 name = "g2p"
-version = "0.3.1-pre"
+version = "0.3.1"
 dependencies = [
  "g2gen 0.2.1",
  "static_assertions 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
