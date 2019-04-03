@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "g2gen"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "g2poly 0.2.0",
  "proc-macro2 0.4.27 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -12,9 +12,9 @@ dependencies = [
 
 [[package]]
 name = "g2p"
-version = "0.3.0"
+version = "0.3.1-pre"
 dependencies = [
- "g2gen 0.2.0",
+ "g2gen 0.2.1",
  "static_assertions 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

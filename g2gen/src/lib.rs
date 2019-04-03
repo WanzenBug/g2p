@@ -423,7 +423,7 @@ fn generate_mul_impl(ident: syn::Ident, ident_name: &str, modulus: G2Poly, ty: P
             type Output = #ident;
 
             fn div(self, rhs: #ident) -> #ident {
-                if (self.0 & #mask as #ty) == 0 {
+                if (rhs.0 & #mask as #ty) == 0 {
                     panic!(#err_msg);
                 }
                 self * #ident(INV_TABLE[(rhs.0 & #mask as #ty) as usize])

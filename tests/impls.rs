@@ -1,4 +1,4 @@
-use g2p;
+use g2p::{g2p, GaloisField};
 use static_assertions;
 
 use core::ops::{
@@ -27,7 +27,7 @@ use core::convert::{
     Into,
 };
 
-g2p::g2p!(GF4, 2);
+g2p!(GF4, 2);
 
 #[test]
 fn test_impls() {
@@ -52,4 +52,22 @@ fn test_impls() {
         Into<u8>,
         From<u8>,
     );
+}
+
+#[test]
+fn test_div_impl() {
+    let z = GF4::ZERO;
+    let a = GF4::from(3);
+
+    assert_eq!(z, z / a);
+}
+
+
+#[test]
+#[should_panic]
+fn test_div_panic() {
+    let z = GF4::ZERO;
+    let a = GF4::from(3);
+
+    let _ = a / z;
 }
