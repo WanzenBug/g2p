@@ -36,7 +36,7 @@ use syn::{
 ///
 /// # Example
 /// ```ignore
-/// g2p!(
+/// g2gen::g2p!(
 ///     GF256,                  // Name of the newtype
 ///     8,                      // The power of 2 specifying the field size 2^8 = 256 in this
 ///                             // case.
@@ -44,9 +44,11 @@ use syn::{
 ///                             // Can be left out in case it is not needed.
 /// );
 ///
+/// # fn main() {
 /// let a: GF256 = 255.into();  // Conversion from the base type
 /// assert_eq!(a - a, a + a);   // Finite field arithmetic.
-/// assert_eq!(format("{}", a), "255_GF256");
+/// assert_eq!(format!("{}", a), "255_GF256");
+/// # }
 /// ```
 #[proc_macro]
 pub fn g2p(input: P1TokenStream) -> P1TokenStream {
@@ -159,8 +161,11 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
         }
     ];
     let gen = generator.0;
+    let modulus_val = modulus.0;
     let galois_trait_impl = quote![
-        impl g2p::GaloisField for #ident {
+        impl ::g2p::GaloisField for #ident {
+            const SIZE: usize = #field_size;
+            const MODULUS: ::g2p::G2Poly = ::g2p::G2Poly(#modulus_val);
             const ZERO: #ident = #ident(0);
             const ONE: #ident = #ident(1);
             const GENERATOR: #ident = #ident(#gen as #ty);

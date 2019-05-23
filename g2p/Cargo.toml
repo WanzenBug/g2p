@@ -18,3 +18,4 @@ static_assertions = "0.3"
 
 [dependencies]
 g2gen = { path = "../g2gen" }
+g2poly = { path = "../g2poly" }
