@@ -448,10 +448,11 @@ impl Settings {
     pub fn from_input(input: ParsedInput) -> syn::Result<Self> {
         let ident = input.ident;
         let ident_name = ident.to_string();
-        let p_val = input.p.value();
-        let modulus = input.modulus
-            .map(|m| G2Poly(m.value()))
-            .unwrap_or_else(|| find_modulus_poly(p_val));
+        let p_val = input.p.base10_parse()?;
+        let modulus = match input.modulus {
+            Some(lit) => G2Poly(lit.base10_parse()?),
+            None => find_modulus_poly(p_val),
+        };
 
         if !modulus.is_irreducible() {
             Err(syn::Error::new(syn::export::Span::call_site(), format!("Modulus {} is not irreducible", modulus)))?;
@@ -484,7 +485,7 @@ mod tests {
 
         let input = ParsedInput {
             ident: syn::Ident::new("foo", span),
-            p: syn::LitInt::new(3, syn::IntSuffix::None, span),
+            p: syn::LitInt::new("3", span),
             modulus: None,
         };
 

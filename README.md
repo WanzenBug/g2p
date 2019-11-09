@@ -37,6 +37,18 @@ assert_eq!(a / c, one / b);
 assert_eq!(b / b, one);
 ```
 
+## Performance
+There is a benchmark suite comparing the result of this crate to [galois_2p8](https://crates.io/crates/galois_2p8)
+and [reed-solomon-erasure](https://crates.io/crates/reed-solomon-erasure) which both implement a finite field with 256
+elements.
+
+![multiplication](doc/mul.svg) ![division](doc/div.svg)
+
+Note that the competing libraries implement some special functionality to improve performance when one of the operands
+is fixed. Here are the results:
+
+![const operand multiplication](doc/mul_const.svg) ![const operand division](doc/div_const.svg)
+
 ## Implementation details
 `g2p` generates a new type that implements all the common arithmetic operations. The
 calculations are performed on either u8, u16 or u32, depending on the field size.

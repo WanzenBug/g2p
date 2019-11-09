@@ -14,8 +14,16 @@ categories = [ "no-std", "cryptography", "algorithms" ]
 keywords = [ "finite-field", "galois", "macro", "newtype"]
 
 [dev-dependencies]
-static_assertions = "0.3"
+static_assertions = "1.1"
+galois_2p8 = "0.1.1"
+reed-solomon-erasure = "4.0.1"
+criterion = "0.3.0"
+rand = "0.7.2"
 
 [dependencies]
 g2gen = { path = "../g2gen", version = "0.4" }
 g2poly = { path = "../g2poly", version = "0.4" }
+
+[[bench]]
+name = "g2_8_bench"
+harness = false

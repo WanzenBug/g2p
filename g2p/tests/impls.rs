@@ -31,7 +31,7 @@ g2p!(GF4, 2);
 
 #[test]
 fn test_impls() {
-    static_assertions::assert_impl!(test; GF4,
+    static_assertions::assert_impl_all!(GF4:
         Clone,
         Copy,
         Send,
