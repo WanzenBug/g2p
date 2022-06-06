@@ -17,7 +17,7 @@ keywords = [ "finite-field", "galois", "macro", "newtype"]
 proc-macro = true
 
 [dependencies]
-syn = { version = "1.0", features = ["parsing"] }
-quote = "1.0"
-proc-macro2 = "1.0"
+syn = { version = "1.0.96", features = ["parsing"] }
+quote = "1.0.18"
+proc-macro2 = "1.0.39"
 g2poly = { path = "../g2poly", version = "0.4" }
