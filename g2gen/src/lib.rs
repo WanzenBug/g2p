@@ -455,13 +455,13 @@ impl Settings {
         };
 
         if !modulus.is_irreducible() {
-            Err(syn::Error::new(syn::export::Span::call_site(), format!("Modulus {} is not irreducible", modulus)))?;
+            Err(syn::Error::new(Span::call_site(), format!("Modulus {} is not irreducible", modulus)))?;
         }
 
         let generator = find_generator(modulus);
 
         if !generator.is_generator(modulus) {
-            Err(syn::Error::new(syn::export::Span::call_site(), format!("{} is not a generator", generator)))?;
+            Err(syn::Error::new(Span::call_site(), format!("{} is not a generator", generator)))?;
         }
 
         Ok(Settings {
@@ -481,10 +481,10 @@ mod tests {
 
     #[test]
     fn test_settings_parser() {
-        let span = syn::export::Span::call_site();
+        let span = Span::call_site();
 
         let input = ParsedInput {
-            ident: syn::Ident::new("foo", span),
+            ident: Ident::new("foo", span),
             p: syn::LitInt::new("3", span),
             modulus: None,
         };
