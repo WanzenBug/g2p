@@ -412,7 +412,7 @@ fn all_benches(c: &mut Criterion) {
     let mut group = c.benchmark_group("division_const");
     for &i in input_sizes.iter() {
         let mut a = vec![0; i];
-        let b = rng.gen_range(0, 255) + 1;
+        let b = rng.gen_range(1..=255);
         let dest = vec![0; i];
         rng.fill_bytes(&mut a[..]);
 

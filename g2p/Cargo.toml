@@ -14,11 +14,11 @@ categories = [ "no-std", "cryptography", "algorithms" ]
 keywords = [ "finite-field", "galois", "macro", "newtype"]
 
 [dev-dependencies]
-static_assertions = "1.1.0"
+static_assertions = "1.1"
 galois_2p8 = "0.1.2"
-reed-solomon-erasure = "6.0.0"
-criterion = "0.4.0"
-rand = "0.8.5"
+reed-solomon-erasure = "6.0"
+criterion = "0.4"
+rand = "0.8"
 
 [dependencies]
 g2gen = { path = "../g2gen", version = "0.4" }
