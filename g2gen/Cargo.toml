@@ -1,6 +1,6 @@
 [package]
 name = "g2gen"
-version = "0.4.0"
+version = "1.0.0"
 authors = ["WanzenBug <moritz@wanzenbug.xyz>"]
 edition = "2018"
 readme = "./README.md"
@@ -20,4 +20,4 @@ proc-macro = true
 syn = { version = "1.0", features = ["parsing"] }
 quote = "1.0"
 proc-macro2 = "1.0"
-g2poly = { path = "../g2poly", version = "0.4" }
+g2poly = { path = "../g2poly", version = "1.0" }
