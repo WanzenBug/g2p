@@ -225,6 +225,7 @@ impl ops::Div for G2Poly {
 impl ops::Add for G2Poly {
     type Output = G2Poly;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn add(self, rhs: G2Poly) -> G2Poly {
         G2Poly(self.0 ^ rhs.0)
     }
@@ -233,6 +234,7 @@ impl ops::Add for G2Poly {
 impl ops::Sub for G2Poly {
     type Output = G2Poly;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     fn sub(self, rhs: G2Poly) -> G2Poly {
         G2Poly(self.0 ^ rhs.0)
     }

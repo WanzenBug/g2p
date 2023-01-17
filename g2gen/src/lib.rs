@@ -137,6 +137,7 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
         impl ::core::ops::Add for #ident {
             type Output = #ident;
 
+            #[allow(clippy::suspicious_arithmetic_impl)]
             fn add(self, rhs: #ident) -> #ident {
                 #ident(self.0 ^ rhs.0)
             }
@@ -150,6 +151,9 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     let sub = quote![
         impl ::core::ops::Sub for #ident {
             type Output = #ident;
+
+
+            #[allow(clippy::suspicious_arithmetic_impl)]
             fn sub(self, rhs: #ident) -> #ident {
                 #ident(self.0 ^ rhs.0)
             }
@@ -318,19 +322,18 @@ fn generate_mul_table_string(modulus: G2Poly) -> String {
     let field_size = 1 << modulus.degree().expect("Irreducible polynomial has positive degree");
     let nparts = ceil_log256(field_size as usize);
 
-    let mut mul_table = Vec::with_capacity(nparts as usize);
+    let mut mul_table = Vec::with_capacity(nparts);
     for left in 0..nparts {
-        let mut left_parts = Vec::with_capacity(nparts as usize);
+        let mut left_parts = Vec::with_capacity(nparts);
         for right in 0..nparts {
             let mut right_parts = Vec::with_capacity(256);
             for i in 0..256 {
-                let i = i << 8 * left;
+                let i = i << (8 * left);
                 let mut row = Vec::with_capacity(256);
                 for j in 0..256 {
-                    let j = j << 8 * right;
+                    let j = j << (8 * right);
                     let v = if i < field_size && j < field_size {
-                        let v = G2Poly(i as u64) * G2Poly(j as u64) % modulus;
-                        v
+                        G2Poly(i as u64) * G2Poly(j as u64) % modulus
                     } else {
                         G2Poly(0)
                     };

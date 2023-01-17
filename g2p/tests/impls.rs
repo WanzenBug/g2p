@@ -1,5 +1,4 @@
 use g2p::{g2p, GaloisField};
-use static_assertions;
 
 use core::ops::{
     Add,
