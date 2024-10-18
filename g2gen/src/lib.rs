@@ -100,8 +100,8 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     ];
 
     let eq = quote![
-        impl ::core::cmp::PartialEq<#ident> for #ident {
-            fn eq(&self, other: &#ident) -> bool {
+        impl ::core::cmp::PartialEq<Self> for #ident {
+            fn eq(&self, other: &Self) -> bool {
                 self.0 == other.0
             }
         }
@@ -126,31 +126,31 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     ];
     let add = quote![
         impl ::core::ops::Add for #ident {
-            type Output = #ident;
+            type Output = Self;
 
             #[allow(clippy::suspicious_arithmetic_impl)]
-            fn add(self, rhs: #ident) -> #ident {
-                #ident(self.0 ^ rhs.0)
+            fn add(self, rhs: Self) -> Self {
+                Self(self.0 ^ rhs.0)
             }
         }
         impl ::core::ops::AddAssign for #ident {
-            fn add_assign(&mut self, rhs: #ident) {
+            fn add_assign(&mut self, rhs: Self) {
                 *self = *self + rhs;
             }
         }
     ];
     let sub = quote![
         impl ::core::ops::Sub for #ident {
-            type Output = #ident;
+            type Output = Self;
 
 
             #[allow(clippy::suspicious_arithmetic_impl)]
-            fn sub(self, rhs: #ident) -> #ident {
-                #ident(self.0 ^ rhs.0)
+            fn sub(self, rhs: Self) -> Self {
+                Self(self.0 ^ rhs.0)
             }
         }
         impl ::core::ops::SubAssign for #ident {
-            fn sub_assign(&mut self, rhs: #ident) {
+            fn sub_assign(&mut self, rhs: Self) {
                 *self = *self - rhs;
             }
         }
@@ -168,9 +168,9 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
         impl ::g2p::GaloisField for #ident {
             const SIZE: usize = #field_size;
             const MODULUS: ::g2p::G2Poly = ::g2p::G2Poly(#modulus_val);
-            const ZERO: #ident = #ident(0);
-            const ONE: #ident = #ident(1);
-            const GENERATOR: #ident = #ident(#gen as #ty);
+            const ZERO: Self = Self(0);
+            const ONE: Self = Self(1);
+            const GENERATOR: Self = Self(#gen as #ty);
         }
     ];
 
@@ -408,13 +408,13 @@ fn generate_mul_impl(ident: syn::Ident, ident_name: &str, modulus: G2Poly, ty: P
 
     let mul = quote![
         impl ::core::ops::Mul for #ident {
-            type Output = #ident;
-            fn mul(self, rhs: #ident) -> #ident {
+            type Output = Self;
+            fn mul(self, rhs: Self) -> Self {
                 #(#mul_ops)+*
             }
         }
         impl ::core::ops::MulAssign for #ident {
-            fn mul_assign(&mut self, rhs: #ident) {
+            fn mul_assign(&mut self, rhs: Self) {
                 *self = *self * rhs;
             }
         }
@@ -424,17 +424,17 @@ fn generate_mul_impl(ident: syn::Ident, ident_name: &str, modulus: G2Poly, ty: P
 
     let div = quote![
         impl ::core::ops::Div for #ident {
-            type Output = #ident;
+            type Output = Self;
 
-            fn div(self, rhs: #ident) -> #ident {
+            fn div(self, rhs: Self) -> Self {
                 if (rhs.0 & #mask as #ty) == 0 {
                     panic!(#err_msg);
                 }
-                self * #ident(INV_TABLE[(rhs.0 & #mask as #ty) as usize])
+                self * Self(INV_TABLE[(rhs.0 & #mask as #ty) as usize])
             }
         }
         impl ::core::ops::DivAssign for #ident {
-            fn div_assign(&mut self, rhs: #ident) {
+            fn div_assign(&mut self, rhs: Self) {
                 *self = *self / rhs;
             }
         }
