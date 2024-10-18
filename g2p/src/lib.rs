@@ -69,7 +69,7 @@
 //! means the multiplication tables use 4 * 256 * 256 entries á 2 byte which is ~0.5MB
 
 
-use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// Procedural macro to generate binary galois fields
 pub use g2gen::g2p;
@@ -89,6 +89,7 @@ Add<Output=Self>
 + AddAssign
 + Sub<Output=Self>
 + SubAssign
++ Neg<Output=Self>
 + Mul<Output=Self>
 + MulAssign
 + Div<Output=Self>
