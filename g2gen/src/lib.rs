@@ -73,7 +73,7 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     let mod_name = Ident::new(&format!("{}_mod", ident_name), Span::call_site());
 
     let struct_def = quote![
-        #[derive(Clone, Copy)]
+        #[derive(Clone, Copy, Hash)]
         pub struct #ident(pub #ty);
     ];
 
