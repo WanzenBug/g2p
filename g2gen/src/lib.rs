@@ -154,6 +154,13 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
                 *self = *self - rhs;
             }
         }
+        impl ::core::ops::Neg for #ident {
+            type Output = Self;
+
+            fn neg(self) -> Self::Output {
+                self
+            }
+        }
     ];
     let gen = generator.0;
     let modulus_val = modulus.0;
