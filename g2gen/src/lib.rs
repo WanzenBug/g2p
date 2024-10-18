@@ -73,6 +73,7 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     let mod_name = Ident::new(&format!("{}_mod", ident_name), Span::call_site());
 
     let struct_def = quote![
+        #[derive(Clone, Copy)]
         pub struct #ident(pub #ty);
     ];
 
@@ -122,16 +123,6 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
                 write!(f, #tmpl, self.0)
             }
         }
-    ];
-    let clone = quote![
-        impl ::core::clone::Clone for #ident {
-            fn clone(&self) -> Self {
-                *self
-            }
-        }
-    ];
-    let copy = quote![
-        impl ::core::marker::Copy for #ident {}
     ];
     let add = quote![
         impl ::core::ops::Add for #ident {
@@ -197,8 +188,6 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
             #eq
             #debug
             #display
-            #clone
-            #copy
             #add
             #sub
             #mul
