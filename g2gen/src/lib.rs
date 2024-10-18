@@ -139,6 +139,13 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
             }
         }
     ];
+    let sum = quote![
+        impl ::core::iter::Sum for #ident {
+            fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+                iter.fold(<Self as ::g2p::GaloisField>::ZERO, ::core::ops::Add::add)
+            }
+        }
+    ];
     let sub = quote![
         impl ::core::ops::Sub for #ident {
             type Output = Self;
@@ -182,6 +189,13 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
         field_size,
         mask,
     );
+    let product = quote![
+        impl ::core::iter::Product for #ident {
+            fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
+                iter.fold(<Self as ::g2p::GaloisField>::ONE, ::core::ops::Mul::mul)
+            }
+        }
+    ];
 
     P1TokenStream::from(quote![
         #struct_def
@@ -196,8 +210,10 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
             #debug
             #display
             #add
+            #sum
             #sub
             #mul
+            #product
             #div
             #galois_trait_impl
         }
