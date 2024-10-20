@@ -1,4 +1,4 @@
-use criterion::{BatchSize, BenchmarkId, Criterion, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 use galois_2p8;
 use galois_2p8::Field;
 use rand;
@@ -18,7 +18,12 @@ fn g2p_addition(a: &[u8], b: &[u8], dest: &mut [u8]) {
     }
 }
 
-fn galois_2p8_addition(field: &galois_2p8::PrimitivePolynomialField, a: &[u8], b: &[u8], dest: &mut [u8]) {
+fn galois_2p8_addition(
+    field: &galois_2p8::PrimitivePolynomialField,
+    a: &[u8],
+    b: &[u8],
+    dest: &mut [u8],
+) {
     assert_eq!(a.len(), b.len());
     assert_eq!(b.len(), dest.len());
 
@@ -44,7 +49,12 @@ fn g2p_multiplication(a: &[u8], b: &[u8], dest: &mut [u8]) {
     }
 }
 
-fn galois_2p8_multiplication(field: &galois_2p8::PrimitivePolynomialField, a: &[u8], b: &[u8], dest: &mut [u8]) {
+fn galois_2p8_multiplication(
+    field: &galois_2p8::PrimitivePolynomialField,
+    a: &[u8],
+    b: &[u8],
+    dest: &mut [u8],
+) {
     assert_eq!(a.len(), b.len());
     assert_eq!(b.len(), dest.len());
 
@@ -70,7 +80,12 @@ fn g2p_multiplication_const(a: &[u8], b: u8, dest: &mut [u8]) {
     }
 }
 
-fn galois_2p8_multiplication_const(field: &galois_2p8::PrimitivePolynomialField, a: &[u8], b: u8, dest: &mut [u8]) {
+fn galois_2p8_multiplication_const(
+    field: &galois_2p8::PrimitivePolynomialField,
+    a: &[u8],
+    b: u8,
+    dest: &mut [u8],
+) {
     assert_eq!(a.len(), dest.len());
 
     dest.copy_from_slice(a);
@@ -92,7 +107,12 @@ fn g2p_division(a: &[u8], b: &[u8], dest: &mut [u8]) {
     }
 }
 
-fn galois_2p8_division(field: &galois_2p8::PrimitivePolynomialField, a: &[u8], b: &[u8], dest: &mut [u8]) {
+fn galois_2p8_division(
+    field: &galois_2p8::PrimitivePolynomialField,
+    a: &[u8],
+    b: &[u8],
+    dest: &mut [u8],
+) {
     assert_eq!(a.len(), b.len());
     assert_eq!(b.len(), dest.len());
 
@@ -118,7 +138,12 @@ fn g2p_division_const(a: &[u8], b: u8, dest: &mut [u8]) {
     }
 }
 
-fn galois_2p8_division_const(field: &galois_2p8::PrimitivePolynomialField, a: &[u8], b: u8, dest: &mut [u8]) {
+fn galois_2p8_division_const(
+    field: &galois_2p8::PrimitivePolynomialField,
+    a: &[u8],
+    b: u8,
+    dest: &mut [u8],
+) {
     assert_eq!(a.len(), dest.len());
 
     dest.copy_from_slice(a);
@@ -132,7 +157,6 @@ fn reed_solomon_erasure_division_const(a: &[u8], b: u8, dest: &mut [u8]) {
         *d = reed_solomon_erasure::galois_8::div(l, b);
     }
 }
-
 
 fn g2p_inverse(a: &[u8], dest: &mut [u8]) {
     assert_eq!(a.len(), dest.len());
@@ -158,10 +182,11 @@ fn reed_solomon_erasure_inverse(a: &[u8], dest: &mut [u8]) {
     }
 }
 
-
 fn all_benches(c: &mut Criterion) {
     let mut rng = rand::thread_rng();
-    let galois_2p8_field = galois_2p8::PrimitivePolynomialField::new_might_panic(galois_2p8::IrreducablePolynomial::Poly84320);
+    let galois_2p8_field = galois_2p8::PrimitivePolynomialField::new_might_panic(
+        galois_2p8::IrreducablePolynomial::Poly84320,
+    );
 
     let input_sizes = [64, 1_024, 16_384];
 
@@ -173,42 +198,36 @@ fn all_benches(c: &mut Criterion) {
         rng.fill_bytes(&mut a[..]);
         rng.fill_bytes(&mut b[..]);
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        g2p_addition(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        galois_2p8_addition(&galois_2p8_field, &a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        reed_solomon_erasure_addition(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    g2p_addition(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    galois_2p8_addition(&galois_2p8_field, &a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    reed_solomon_erasure_addition(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 
@@ -220,42 +239,36 @@ fn all_benches(c: &mut Criterion) {
         rng.fill_bytes(&mut a[..]);
         rng.fill_bytes(&mut b[..]);
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        g2p_multiplication(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        galois_2p8_multiplication(&galois_2p8_field, &a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        reed_solomon_erasure_multiplication(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    g2p_multiplication(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    galois_2p8_multiplication(&galois_2p8_field, &a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    reed_solomon_erasure_multiplication(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 
@@ -266,42 +279,36 @@ fn all_benches(c: &mut Criterion) {
         let dest = vec![0; i];
         rng.fill_bytes(&mut a[..]);
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        g2p_multiplication_const(&a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        galois_2p8_multiplication_const(&galois_2p8_field, &a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        reed_solomon_erasure_multiplication_const(&a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    g2p_multiplication_const(&a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    galois_2p8_multiplication_const(&galois_2p8_field, &a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    reed_solomon_erasure_multiplication_const(&a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 
@@ -317,42 +324,36 @@ fn all_benches(c: &mut Criterion) {
             }
         }
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        g2p_inverse(&a, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        galois_2p8_inverse(&galois_2p8_field, &a, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        reed_solomon_erasure_inverse(&a, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    g2p_inverse(&a, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    galois_2p8_inverse(&galois_2p8_field, &a, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    reed_solomon_erasure_inverse(&a, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 
@@ -370,42 +371,36 @@ fn all_benches(c: &mut Criterion) {
             }
         }
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        g2p_division(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        galois_2p8_division(&galois_2p8_field, &a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), b.clone(), dest.clone()),
-                    |(a, b, mut dest)| {
-                        reed_solomon_erasure_division(&a, &b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    g2p_division(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    galois_2p8_division(&galois_2p8_field, &a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), b.clone(), dest.clone()),
+                |(a, b, mut dest)| {
+                    reed_solomon_erasure_division(&a, &b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 
@@ -416,42 +411,36 @@ fn all_benches(c: &mut Criterion) {
         let dest = vec![0; i];
         rng.fill_bytes(&mut a[..]);
 
-        group.bench_function(
-            BenchmarkId::new("g2p", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        g2p_division_const(&a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("galois_2p8", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        galois_2p8_division_const(&galois_2p8_field, &a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
-        group.bench_function(
-            BenchmarkId::new("reed_solomon_erasure", i),
-            |bencher| {
-                bencher.iter_batched(
-                    || (a.clone(), dest.clone()),
-                    |(a, mut dest)| {
-                        reed_solomon_erasure_division_const(&a, b, &mut dest);
-                        dest
-                    },
-                    BatchSize::SmallInput,
-                )
-            });
+        group.bench_function(BenchmarkId::new("g2p", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    g2p_division_const(&a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("galois_2p8", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    galois_2p8_division_const(&galois_2p8_field, &a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
+        group.bench_function(BenchmarkId::new("reed_solomon_erasure", i), |bencher| {
+            bencher.iter_batched(
+                || (a.clone(), dest.clone()),
+                |(a, mut dest)| {
+                    reed_solomon_erasure_division_const(&a, b, &mut dest);
+                    dest
+                },
+                BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 }

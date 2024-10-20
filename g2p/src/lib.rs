@@ -68,8 +68,10 @@
 //! have to be added together using the normal finite field addition. For our GF65536 example this
 //! means the multiplication tables use 4 * 256 * 256 entries á 2 byte which is ~0.5MB
 
-
-use core::{iter::{Product, Sum}, ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign}};
+use core::{
+    iter::{Product, Sum},
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign},
+};
 
 /// Procedural macro to generate binary galois fields
 pub use g2gen::g2p;
@@ -85,20 +87,21 @@ pub use g2poly::G2Poly;
 /// In addition, some often used constants like `ONE` and `ZERO` are exported, as well as the more
 /// esoteric `GENERATOR`.
 pub trait GaloisField:
-Add<Output=Self>
-+ AddAssign
-+ Sum
-+ Sub<Output=Self>
-+ SubAssign
-+ Neg<Output=Self>
-+ Mul<Output=Self>
-+ MulAssign
-+ Product
-+ Div<Output=Self>
-+ DivAssign
-+ Copy
-+ PartialEq
-+ Eq {
+    Add<Output = Self>
+    + AddAssign
+    + Sum
+    + Sub<Output = Self>
+    + SubAssign
+    + Neg<Output = Self>
+    + Mul<Output = Self>
+    + MulAssign
+    + Product
+    + Div<Output = Self>
+    + DivAssign
+    + Copy
+    + PartialEq
+    + Eq
+{
     /// Number of elements in the field
     const SIZE: usize;
 

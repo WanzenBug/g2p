@@ -12,17 +12,13 @@
 extern crate proc_macro;
 
 use proc_macro::TokenStream as P1TokenStream;
-use proc_macro2::{TokenStream as P2TokenStream, Ident, Span};
+use proc_macro2::{Ident, Span, TokenStream as P2TokenStream};
 
-use g2poly::{G2Poly, extended_gcd};
+use g2poly::{extended_gcd, G2Poly};
 use quote::quote;
 use syn::{
-    parse::{
-        Parse,
-        ParseStream,
-    },
-    parse_macro_input,
-    Token,
+    parse::{Parse, ParseStream},
+    parse_macro_input, Token,
 };
 
 /// Generate a newtype of the given name and implement finite field arithmetic on it.
@@ -181,14 +177,8 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
         }
     ];
 
-    let (tables, mul, div) = generate_mul_impl(
-        ident.clone(),
-        &ident_name,
-        modulus,
-        ty,
-        field_size,
-        mask,
-    );
+    let (tables, mul, div) =
+        generate_mul_impl(ident.clone(), &ident_name, modulus, ty, field_size, mask);
     let product = quote![
         impl ::core::iter::Product for #ident {
             fn product<I: Iterator<Item = Self>>(iter: I) -> Self {
@@ -245,21 +235,18 @@ impl Parse for ParsedInput {
             match ident_name.as_str() {
                 "modulus" => {
                     if modulus.is_some() {
-                        Err(syn::parse::Error::new(ident.span(), "Double declaration of 'modulus'"))?
+                        Err(syn::parse::Error::new(
+                            ident.span(),
+                            "Double declaration of 'modulus'",
+                        ))?
                     }
                     modulus = Some(input.parse()?);
                 }
-                _ => {
-                    Err(syn::parse::Error::new(ident.span(), "Expected 'modulus'"))?
-                }
+                _ => Err(syn::parse::Error::new(ident.span(), "Expected 'modulus'"))?,
             }
         }
 
-        Ok(ParsedInput {
-            ident,
-            p,
-            modulus,
-        })
+        Ok(ParsedInput { ident, p, modulus })
     }
 }
 
@@ -331,7 +318,10 @@ fn ceil_log256(mut n: usize) -> usize {
 fn generate_mul_table_string(modulus: G2Poly) -> String {
     assert!(modulus.is_irreducible());
 
-    let field_size = 1 << modulus.degree().expect("Irreducible polynomial has positive degree");
+    let field_size = 1
+        << modulus
+            .degree()
+            .expect("Irreducible polynomial has positive degree");
     let nparts = ceil_log256(field_size as usize);
 
     let mut mul_table = Vec::with_capacity(nparts);
@@ -365,7 +355,10 @@ fn generate_mul_table_string(modulus: G2Poly) -> String {
 fn generate_inv_table_string(modulus: G2Poly) -> String {
     assert!(modulus.is_irreducible());
 
-    let field_size = 1 << modulus.degree().expect("Irreducible polynomial has positive degree");
+    let field_size = 1
+        << modulus
+            .degree()
+            .expect("Irreducible polynomial has positive degree");
     let mut inv_table = vec![0; field_size as usize];
     // Inverse table is small enough to compute directly
     for i in 1..field_size {
@@ -395,7 +388,14 @@ fn generate_inv_table_string(modulus: G2Poly) -> String {
     res
 }
 
-fn generate_mul_impl(ident: syn::Ident, ident_name: &str, modulus: G2Poly, ty: P2TokenStream, field_size: usize, mask: u64) -> (P2TokenStream, P2TokenStream, P2TokenStream) {
+fn generate_mul_impl(
+    ident: syn::Ident,
+    ident_name: &str,
+    modulus: G2Poly,
+    ty: P2TokenStream,
+    field_size: usize,
+    mask: u64,
+) -> (P2TokenStream, P2TokenStream, P2TokenStream) {
     let mul_table = generate_mul_table_string(modulus);
     let inv_table = generate_inv_table_string(modulus);
 
@@ -470,13 +470,19 @@ impl Settings {
         };
 
         if !modulus.is_irreducible() {
-            Err(syn::Error::new(Span::call_site(), format!("Modulus {} is not irreducible", modulus)))?;
+            Err(syn::Error::new(
+                Span::call_site(),
+                format!("Modulus {} is not irreducible", modulus),
+            ))?;
         }
 
         let generator = find_generator(modulus);
 
         if !generator.is_generator(modulus) {
-            Err(syn::Error::new(Span::call_site(), format!("{} is not a generator", generator)))?;
+            Err(syn::Error::new(
+                Span::call_site(),
+                format!("{} is not a generator", generator),
+            ))?;
         }
 
         Ok(Settings {
@@ -488,7 +494,6 @@ impl Settings {
         })
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -506,27 +511,36 @@ mod tests {
 
         let r = Settings::from_input(input);
         assert!(r.is_ok());
-        assert_eq!(r.unwrap(), Settings {
-            ident: syn::Ident::new("foo", span),
-            ident_name: "foo".to_string(),
-            p_val: 3,
-            modulus: G2Poly(0b1011),
-            generator: G2Poly(0b10),
-        });
+        assert_eq!(
+            r.unwrap(),
+            Settings {
+                ident: syn::Ident::new("foo", span),
+                ident_name: "foo".to_string(),
+                p_val: 3,
+                modulus: G2Poly(0b1011),
+                generator: G2Poly(0b10),
+            }
+        );
     }
 
     #[test]
     fn test_generate_mul_table() {
         let m = G2Poly(0b111);
 
-        assert_eq!(include_str!("../tests/mul_table.txt").trim(), generate_mul_table_string(m));
+        assert_eq!(
+            include_str!("../tests/mul_table.txt").trim(),
+            generate_mul_table_string(m)
+        );
     }
 
     #[test]
     fn test_generate_inv_table_string() {
         let m = G2Poly(0b1_0001_1011);
 
-        assert_eq!(include_str!("../tests/inv_table.txt").trim(), generate_inv_table_string(m));
+        assert_eq!(
+            include_str!("../tests/inv_table.txt").trim(),
+            generate_inv_table_string(m)
+        );
     }
 
     #[test]

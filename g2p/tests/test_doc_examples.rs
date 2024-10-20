@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use g2p::{GaloisField, g2p};
+use g2p::{g2p, GaloisField};
 
 g2p!(GF4, 2);
 g2p!(GF16, 4, modulus: 0b10011);

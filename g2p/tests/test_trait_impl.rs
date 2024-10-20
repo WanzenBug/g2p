@@ -1,5 +1,4 @@
-use g2p::{GaloisField, G2Poly, g2p};
-
+use g2p::{g2p, G2Poly, GaloisField};
 
 g2p!(GF256, 8, modulus: 0b1_0001_1011);
 

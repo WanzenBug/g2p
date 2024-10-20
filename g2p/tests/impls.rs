@@ -1,30 +1,10 @@
 use g2p::{g2p, GaloisField};
 
-use core::ops::{
-    Add,
-    AddAssign,
-    Sub,
-    SubAssign,
-    Mul,
-    MulAssign,
-    Div,
-    DivAssign,
-};
-use core::fmt::{
-    Debug,
-    Display,
-};
-use core::marker::{
-    Sync,
-    Send,
-    Sized,
-    Copy,
-};
 use core::clone::Clone;
-use core::convert::{
-    From,
-    Into,
-};
+use core::convert::{From, Into};
+use core::fmt::{Debug, Display};
+use core::marker::{Copy, Send, Sized, Sync};
+use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 g2p!(GF4, 2);
 
@@ -60,7 +40,6 @@ fn test_div_impl() {
 
     assert_eq!(z, z / a);
 }
-
 
 #[test]
 #[should_panic]

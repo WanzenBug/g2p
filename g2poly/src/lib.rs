@@ -31,12 +31,7 @@
 //! assert_eq!(s, g2poly::G2Poly(0b101));
 //! ```
 
-use core::{
-    ops,
-    fmt,
-    cmp,
-};
-
+use core::{cmp, fmt, ops};
 
 /// Main type exported by this library
 ///
@@ -91,7 +86,8 @@ impl G2PolyProd {
     /// // (G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(4)).to_poly();
     /// ```
     pub fn to_poly(self) -> G2Poly {
-        self.try_to_poly().expect("Tried to convert product bigger than G2Poly max")
+        self.try_to_poly()
+            .expect("Tried to convert product bigger than G2Poly max")
     }
 
     /// Convert to G2Poly if possible
@@ -264,7 +260,6 @@ impl ops::Rem<G2Poly> for G2PolyProd {
         let mut rem = self.0;
         let mut rem_degree_p1 = 128 - rem.leading_zeros();
 
-
         while mod_degree_p1 <= rem_degree_p1 {
             let shift_len = rem_degree_p1 - mod_degree_p1;
             rem ^= module << shift_len;
@@ -342,7 +337,6 @@ pub fn extended_gcd(a: G2Poly, b: G2Poly) -> (G2Poly, G2Poly, G2Poly) {
     (old_r, old_s, old_t)
 }
 
-
 impl G2Poly {
     /// The constant `1` polynomial.
     ///
@@ -388,7 +382,6 @@ impl G2Poly {
         init
     }
 
-
     /// Determine if the given polynomial is irreducible.
     ///
     /// Irreducible polynomials not be expressed as the product of other irreducible polynomials
@@ -404,19 +397,7 @@ impl G2Poly {
     /// assert!(p.is_irreducible());
     /// ```
     pub fn is_irreducible(self) -> bool {
-        const PRIMES_LE_63: [u64; 11] = [
-            2,
-            3,
-            5,
-            7,
-            11,
-            13,
-            17,
-            19,
-            23,
-            29,
-            31,
-        ];
+        const PRIMES_LE_63: [u64; 11] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31];
 
         // Zero is not irreducible
         if self == G2Poly::ZERO {
@@ -425,7 +406,8 @@ impl G2Poly {
 
         // Degrees
         let n = self.degree().expect("Already checked for zero");
-        let distinct_prime_coprod = PRIMES_LE_63.iter()
+        let distinct_prime_coprod = PRIMES_LE_63
+            .iter()
             .filter(|&&p| p <= n)
             .filter(|&&p| n % p == 0)
             .map(|&p| n / p);
@@ -536,7 +518,10 @@ mod tests {
         assert_eq!(b * e, G2PolyProd(0b11111));
         assert_eq!(c * e, G2PolyProd(0xff_ff_ff_ff_ff_ff_ff_ff));
         assert_eq!(a * b, G2PolyProd(0b10011011));
-        assert_eq!(a * c, G2PolyProd(0b1001111111111111111111111111111111111111111111111111111111111111011));
+        assert_eq!(
+            a * c,
+            G2PolyProd(0b1001111111111111111111111111111111111111111111111111111111111111011)
+        );
         assert_eq!(c * c, G2PolyProd(0b1010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101));
     }
 

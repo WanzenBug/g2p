@@ -12,7 +12,6 @@ g2p!(
     modulus: 0b_1_0001_1011,
 );
 
-
 #[test]
 fn test_rijndael() {
     let a = GF256::from(0);
