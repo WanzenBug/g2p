@@ -12,6 +12,7 @@ A crate to create types that implement fast finite field arithmetic.
 """
 categories = [ "no-std", "cryptography", "algorithms" ]
 keywords = [ "finite-field", "galois", "macro", "newtype"]
+rust-version = "1.61"
 
 [dev-dependencies]
 static_assertions = "1.1"

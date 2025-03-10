@@ -12,6 +12,7 @@ Primitive implementation of polynomials over the field GF(2)
 """
 categories = [ "no-std", "algorithms" ]
 keywords = [ "finite-field", "galois"]
+rust-version = "1.60"
 
 [lib]
 path = "src/lib.rs"
