@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
 
-env: 
+env:
   CARGO_TERM_COLOR: always
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         toolchain:
-          - "1.61" # MSRV
+          - "1.70" # MSRV
           - "stable"
     steps:
       - uses: actions/checkout@v4
