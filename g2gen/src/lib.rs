@@ -69,7 +69,7 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
     let mod_name = Ident::new(&format!("{}_mod", ident_name), Span::call_site());
 
     let struct_def = quote![
-        #[derive(Clone, Copy, Hash)]
+        #[derive(Clone, Copy, Eq, PartialEq, Hash)]
         pub struct #ident(pub #ty);
     ];
 
@@ -93,16 +93,6 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
                 #ident(v & #ident::MASK)
             }
         }
-    ];
-
-    let eq = quote![
-        impl ::core::cmp::PartialEq<Self> for #ident {
-            fn eq(&self, other: &Self) -> bool {
-                self.0 == other.0
-            }
-        }
-
-        impl ::core::cmp::Eq for #ident {}
     ];
 
     let tmpl = format!("{{}}_{}", ident_name);
@@ -196,7 +186,6 @@ pub fn g2p(input: P1TokenStream) -> P1TokenStream {
             #tables
             #from
             #into
-            #eq
             #debug
             #display
             #add
