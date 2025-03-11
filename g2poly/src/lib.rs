@@ -101,7 +101,7 @@ impl G2PolyProd {
     /// assert_eq!((G2Poly(0x40_00_00_00_00_00_00_00) * G2Poly(4)).try_to_poly(), None);
     /// ```
     pub fn try_to_poly(self) -> Option<G2Poly> {
-        if self.0 <= u64::max_value() as u128 {
+        if self.0 <= u64::MAX as u128 {
             Some(G2Poly(self.0 as u64))
         } else {
             None
@@ -110,19 +110,19 @@ impl G2PolyProd {
 }
 
 impl fmt::Debug for G2Poly {
-    fn fmt<'a>(&self, f: &mut fmt::Formatter<'a>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "G2Poly {{ {:b} }}", self.0)
     }
 }
 
 impl fmt::Debug for G2PolyProd {
-    fn fmt<'a>(&self, f: &mut fmt::Formatter<'a>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "G2PolyProd {{ {:b} }}", self.0)
     }
 }
 
 impl fmt::Display for G2Poly {
-    fn fmt<'a>(&self, f: &mut fmt::Formatter<'a>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.0 == 0 {
             return write!(f, "G2Poly {{ 0 }}");
         }
