@@ -12,7 +12,7 @@ A macro to create types that implement fast finite field arithmetic.
 """
 categories = [ "no-std", "algorithms" ]
 keywords = [ "finite-field", "galois", "macro", "newtype"]
-rust-version = "1.61"
+rust-version = "1.70"
 
 [lib]
 proc-macro = true
