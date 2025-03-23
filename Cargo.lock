@@ -224,7 +224,7 @@ dependencies = [
 
 [[package]]
 name = "g2poly"
-version = "1.2.1"
+version = "1.2.2"
 
 [[package]]
 name = "galois_2p8"
